@@ -1,12 +1,12 @@
 import './scss/styles.scss';
 
 // Импортируем классы моделей 
-import { ProductCatalog } from './components/base/Moduls/ProductCatalog';
-import { Basket } from './components/base/Moduls/Basket';
-import { Buyer } from './components/base/Moduls/Buyer';
+import { ProductCatalog } from './components/Models/ProductCatalog';
+import { Basket } from './components/Models/Basket';
+import { Buyer } from './components/Models/Buyer';
 
 // Импортируем класс Server и Api
-import { Server } from './components/base/Server';
+import { Server } from './components/Server';
 import { Api } from './components/base/Api';
 
 // Импортируем тестовые данные
@@ -80,7 +80,7 @@ if (allProducts.length >= 2) {
   basket.addSavedProducts(allProducts[0]);
   basket.addSavedProducts(allProducts[1]);
   console.log(`Добавлены товары: "${allProducts[0].title}" и "${allProducts[1].title}"`);
-  
+
   // Проверяем добавление дубликата (не должен добавиться)
   console.log('2.3 Попытка добавить дубликат товара:');
   basket.addSavedProducts(allProducts[0]);
@@ -103,7 +103,7 @@ if (allProducts.length > 0) {
   const firstProductId = allProducts[0].id;
   const hasProduct = basket.hasSavedProduct(firstProductId);
   console.log(`Товар с ID "${firstProductId}" в корзине: ${hasProduct ? 'Да' : 'Нет'}`);
-  
+
   // Проверяем несуществующий товар
   const hasNonExistent = basket.hasSavedProduct('non-existent');
   console.log(`Товар с несуществующим ID в корзине: ${hasNonExistent ? 'Да' : 'Нет'}`);
@@ -164,10 +164,14 @@ console.log('3.6 Получение всех данных покупателя:'
 const customerData = buyer.getCustomerData();
 console.log('Данные покупателя:', customerData);
 
-// Проверяем validateData - валидация данных (должна пройти успешно)
+// Проверяем validate - валидация данных (должна пройти успешно)
 console.log('3.7 Валидация данных (успешная):');
-const isValid = buyer.validateData();
+const errors = buyer.validate();
+const isValid = Object.keys(errors).length === 0;
 console.log(`Данные валидны: ${isValid ? 'Да' : 'Нет'}`);
+if (!isValid) {
+  console.log('Ошибки валидации:', errors);
+}
 
 // Проверяем валидацию с неполными данными
 console.log('3.8 Валидация данных (неуспешная):');
@@ -178,8 +182,12 @@ invalidBuyer.saveAddress('');
 invalidBuyer.saveEmail('invalid-email');
 invalidBuyer.savePhone('');
 console.log('Данные невалидного покупателя:', invalidBuyer.getCustomerData());
-const isInvalidValid = invalidBuyer.validateData();
+const invalidErrors = invalidBuyer.validate();
+const isInvalidValid = Object.keys(invalidErrors).length === 0;
 console.log(`Данные валидны: ${isInvalidValid ? 'Да' : 'Нет (ожидаемо)'}`);
+if (!isInvalidValid) {
+  console.log('Ошибки валидации:', invalidErrors);
+}
 
 // Проверяем clearCustomerData - очистка данных покупателя
 console.log('3.9 Очистка данных покупателя:');
@@ -204,17 +212,17 @@ console.log('4.1 Выполнение GET запроса на сервер дл�
 server.getProducts()
   .then(response => {
     console.log('Ответ сервера:', response);
-    
+
     // Сохраняем полученные товары в каталог
     console.log('4.2 Сохранение полученных товаров в каталог...');
     productCatalog.saveProducts(response.items);
-    
+
     // Выводим сохраненный каталог в консоль
     console.log('4.3 Каталог после сохранения данных с сервера:');
     const productsFromServer = productCatalog.getProducts();
     console.log('Товары из каталога:', productsFromServer);
     console.log(`Количество товаров в каталоге: ${productsFromServer.length}`);
-    
+
     console.log('Данные с сервера успешно сохранены в каталог!');
   })
   .catch(error => {

@@ -1,4 +1,4 @@
-import { IProduct } from '../../../types/index';
+import { IProduct } from '../../types/index';
 
 export class Basket {
   private savedProducts: IProduct[] = [];
@@ -14,9 +14,7 @@ export class Basket {
    * Добавление товара, который был получен в параметре, в массив корзины
    */
   addSavedProducts(product: IProduct): void {
-    if (!this.hasSavedProduct(product.id)) {
       this.savedProducts.push(product);
-    }
   }
 
   /**

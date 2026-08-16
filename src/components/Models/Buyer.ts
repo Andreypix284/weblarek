@@ -1,4 +1,4 @@
-import { IBuyer, TPayment } from '../../../types/index';
+import { IBuyer, TPayment } from '../../types/index';
 
 export class Buyer {
   private payment: TPayment = '';
@@ -60,31 +60,27 @@ export class Buyer {
    * Валидация данных покупателя
    * Проверяет, что все поля заполнены
    */
-  validateData(): boolean {
-    // Проверяем, что способ оплаты выбран
-    if (this.payment === '') {
-      console.warn('Способ оплаты не выбран');
-      return false;
+  validate(): TErrors {
+    const errors: TErrors = {};
+
+    if (!this.payment) {
+      errors.payment = 'Необходимо выбрать способ оплаты';
     }
 
-    // Проверяем заполненность обязательных полей
-    if (!this.address.trim()) {
-      console.warn('Адрес не заполнен');
-      return false;
+    if (!this.email?.trim()) {
+      errors.email = 'Необходимо указать email';
     }
 
-    if (!this.phone.trim()) {
-      console.warn('Телефон не заполнен');
-      return false;
+    if (!this.phone?.trim()) {
+      errors.phone = 'Необходимо указать телефон';
     }
 
-    // Проверяем валидность email (базовая проверка)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!this.email.trim() || !emailRegex.test(this.email)) {
-      console.warn('Email не валидный или не заполнен');
-      return false;
+    if (!this.address?.trim()) {
+      errors.address = 'Необходимо указать адрес';
     }
 
-    return true;
+    return errors;
   }
 }
+
+type TErrors = Partial<Record<keyof IBuyer, string>>;
