@@ -8,6 +8,7 @@ import { Buyer } from './components/Models/Buyer';
 // Импортируем класс Server и Api
 import { Server } from './components/Server';
 import { Api } from './components/base/Api';
+import { API_URL } from './utils/constants';
 
 // Импортируем тестовые данные
 import { apiProducts } from './utils/data';
@@ -200,8 +201,7 @@ console.log('Данные после очистки:', buyer.getCustomerData());
 console.log('========== РАБОТА С СЕРВЕРОМ ==========');
 
 // Создаем экземпляр класса Api
-// Замените URL на реальный адрес вашего сервера
-const api = new Api('https://your-api-url.com');
+const api = new Api(API_URL);
 
 // Создаем экземпляр класса Server
 const server = new Server(api);
